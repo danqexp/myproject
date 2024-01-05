@@ -1,0 +1,43 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+
+app.use(bodyParser.json());
+
+// Mock data - replace this with an actual database
+const bookReviews = [
+  { bookId: 1, review: 'A great book!' },
+  { bookId: 2, review: 'Excellent read!' },
+  { bookId: 3, review: 'Not bad, but could be better' }
+];
+
+// Endpoint to add or modify a book review
+app.post('/api/review/:bookId', (req, res) => {
+  const bookId = parseInt(req.params.bookId);
+  const newReview = req.body.review;
+
+  // Check if the required fields are provided
+  if (!newReview) {
+    return res.status(400).json({ error: 'Please provide a review' });
+  }
+
+  // Check if the book exists
+  const existingReviewIndex = bookReviews.findIndex(entry => entry.bookId === bookId);
+
+  if (existingReviewIndex !== -1) {
+    // Modify the existing review
+    bookReviews[existingReviewIndex].review = newReview;
+    res.json({ message: 'Review modified successfully', review: bookReviews[existingReviewIndex] });
+  } else {
+    // Add a new review
+    const newReviewEntry = { bookId, review: newReview };
+    bookReviews.push(newReviewEntry);
+    res.json({ message: 'Review added successfully', review: newReviewEntry });
+  }
+});
+
+// Start the server
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});

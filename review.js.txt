@@ -1,0 +1,27 @@
+const express = require('express');
+const app = express();
+
+// Mock data - replace this with actual data retrieval logic
+const bookReviews = [
+  { bookId: 1, review: 'A great book!' },
+  { bookId: 2, review: 'Excellent read!' },
+  { bookId: 3, review: 'Not bad, but could be better' }
+];
+
+// Endpoint to get a book review by book ID
+app.get('/api/book/review/:bookId', (req, res) => {
+  const bookId = parseInt(req.params.bookId);
+  const review = bookReviews.find(entry => entry.bookId === bookId);
+
+  if (review) {
+    res.json(review);
+  } else {
+    res.status(404).json({ error: 'Review not found for the specified book' });
+  }
+});
+
+// Start the server
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});

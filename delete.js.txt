@@ -1,0 +1,35 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+
+app.use(bodyParser.json());
+
+// Mock data - replace this with an actual database
+const bookReviews = [
+  { bookId: 1, userId: 1, review: 'A great book!' },
+  { bookId: 2, userId: 2, review: 'Excellent read!' },
+  { bookId: 3, userId: 1, review: 'Not bad, but could be better' }
+];
+
+// Endpoint to delete a book review added by a particular user
+app.delete('/api/review/:bookId/:userId', (req, res) => {
+  const bookId = parseInt(req.params.bookId);
+  const userId = parseInt(req.params.userId);
+
+  // Find the review index
+  const reviewIndex = bookReviews.findIndex(entry => entry.bookId === bookId && entry.userId === userId);
+
+  if (reviewIndex !== -1) {
+    // Remove the review
+    const deletedReview = bookReviews.splice(reviewIndex, 1);
+    res.json({ message: 'Review deleted successfully', deletedReview: deletedReview[0] });
+  } else {
+    res.status(404).json({ error: 'Review not found for the specified book and user' });
+  }
+});
+
+// Start the server
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
